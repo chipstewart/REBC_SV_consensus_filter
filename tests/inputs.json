@@ -1,0 +1,13 @@
+{
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.NALG_thresh1": "2",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.NALT_thresh1": "2",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.TALT_thresh1": "4",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.VAF_thresh1": "0.1",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.blacklist_bed": "/opt/REBC_SV_consensus_filter/tests/REBC.SV.CytoBand.Blacklist.Snowman.16Sep2016.bed",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.id": "REBC_primary_pair_393",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.input_SV_tsv": "/opt/REBC_SV_consensus_filter/tests/REBC_primary_pair_393.dranger_svaba_snowman_manta.25Aug2018.tsv.gz",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.local_disk_gb": "10",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.num_preemptions": "3",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.ram_gb": "5",
+  "REBC_SV_consensus_filter.rebc_sv_consensus_filter_task_1.stub": "REBC"
+}
