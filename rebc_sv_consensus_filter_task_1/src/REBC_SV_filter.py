@@ -69,8 +69,22 @@ if __name__ == "__main__":
     BP['VCF_TREF'] = BP['VCF_TREF'].apply(int)
     BP['VCF_NALT'] = BP['VCF_NALT'].apply(int)
     BP['VAF'] = BP['VCF_TALT'].apply(float) / ( BP['VCF_TALT']+ BP['VCF_TREF'])
-    BP['NALG'] = (BP['dRanger'].apply(int)>0)*1 + (BP['pcawg_snowman'].apply(int)>0)*1 + (BP['SvABA'].apply(int)>0)*1 + (BP['Manta'].apply(int)>0)*1
-
+    
+    BP['NALG'] = 0*BP['pos1']
+    for field in BP.columns:
+        if field == 'dRanger':
+            BP['NALG'] = BP['NALG'] + (BP['dRanger'].apply(int)>0)*1
+ 
+        if field == 'pcawg_snowman':
+            BP['NALG'] = BP['NALG'] + (BP['pcawg_snowman'].apply(int)>0)*1
+    
+        if field == 'SvABA':
+            BP['NALG'] = BP['NALG'] + (BP['SvABA'].apply(int)>0)*1
+ 
+        if field == 'Manta':
+            BP['NALG'] = BP['NALG'] + (BP['Manta'].apply(int)>0)*1
+    	   
+    	        
 #    def vaf(a,r):
 #        return float(a)/(a + r + 1e-10)
 #
