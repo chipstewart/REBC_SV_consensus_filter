@@ -68,7 +68,8 @@ if __name__ == "__main__":
     BP['VCF_TALT'] = BP['VCF_TALT'].apply(int)
     BP['VCF_TREF'] = BP['VCF_TREF'].apply(int)
     BP['VCF_NALT'] = BP['VCF_NALT'].apply(int)
-    BP['VAF'] = BP['VCF_TALT'].apply(float) / ( BP['VCF_TALT']+ BP['VCF_TREF'])
+    # VAF based on average of TREF for both breakpoints
+    BP['VAF'] = BP['VCF_TALT'].apply(float) / ( BP['VCF_TALT']+ BP['VCF_TREF']/2.0)
     
     BP['NALG'] = 0*BP['pos1']
     for field in BP.columns:
