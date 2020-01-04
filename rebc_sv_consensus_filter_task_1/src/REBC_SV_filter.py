@@ -5,6 +5,7 @@ import os
 import subprocess
 import numpy as np
 import pandas as pd
+import copy
 
 if not (sys.version_info[0] == 2  and sys.version_info[1] in [7]):
     raise "Must use Python 2.7.x"
@@ -69,8 +70,38 @@ if __name__ == "__main__":
     BP['VCF_TREF'] = BP['VCF_TREF'].apply(int)
     BP['VCF_NALT'] = BP['VCF_NALT'].apply(int)
     # VAF based on average of TREF for both breakpoints
-    BP['VAF'] = BP['VCF_TALT'].apply(float) / ( BP['VCF_TALT']+ BP['VCF_TREF']/2.0)
-    
+    BP['VAF'] = BP['VCF_TALT'].apply(float) / ( BP['VCF_TALT']+ BP['VCF_TREF']/2.0)    
+    # balanced event (same id+genes with flipped strands)
+    pID=BP['individual']
+    NSV=len(pID)
+    idF=copy.deepcopy(pID).tolist()
+    idR=copy.deepcopy(pID).tolist()
+    STR='+-'
+    istr1 = BP['str1'].apply(int)
+    istr2 = BP['str2'].apply(int)
+
+    for i in range(NSV):
+        g1=[BP['gene1'][i], BP['gene2'][i]]
+        g1.sort()
+        g2=g1[0]+','+g1[1]
+        strF = STR[istr1[i]] + STR[istr2[i]]
+        strR = STR[1-istr1[i]] + STR[1-istr2[i]]
+        idF[i]=g2+':'+strF
+        idR[i]=g2+':'+strR
+        #print idF[i],idR[i]
+
+    BP['balanced']=(0*BP['pos1'])>1
+
+    for i in range(NSV):
+        BP['balanced'][i]=idF[i] in idR
+
+    # in-frame protein fusions
+    substr='Protein fusion: in frame'
+    fus=BP['fusion'].tolist()
+    res = [fus.index(i) for i in fus if substr in i]
+    BP['inframefusion'] = (0 * BP['pos1']) > 1
+    BP['inframefusion'][res]=0<1
+
     BP['NALG'] = 0*BP['pos1']
     for field in BP.columns:
         if field == 'dRanger':
@@ -139,8 +170,18 @@ if __name__ == "__main__":
         BP.to_csv(outFile, sep="\t", index=None)
         sys.exit(0)
 
-    BP=BP[BP['VAF']>=VAF_thresh]
-    print ('BP VAF>=%.3f:\t %d\n ' % (VAF_thresh, BP.individual.count()))
+    PASS = (BP['VAF']>=VAF_thresh) | BP['balanced'] | BP['inframefusion']
+    #BP=BP[BP['VAF']>=VAF_thresh]
+    S1 = sum(BP['VAF'] >= VAF_thresh)
+    S2 = sum(BP['balanced'])
+    S3 = sum(BP['inframefusion'])
+
+    BP=BP[PASS]
+    print ('BP VAF>=%.3f:\t %d\n ' % (VAF_thresh, S1))
+    print ('BP balanced:\t %d\n ' % ( S2))
+    print ('BP inframefusion:\t %d\n ' % (S3))
+    print ('BP PASS:\t %d\n ' % (BP.individual.count()))
+    
     if BP.individual.count()==0:
         BP.to_csv(outFile, sep="\t", index=None)
         sys.exit(0)
